@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "Email Validator",
+    "version": "1.0",
+    "description": "A simple email validator that checks email format and domain existence (IDN support)",
+    "permissions": ["activeTab"],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      }
+    ],
+    "host_permissions": [
+      "http://*/*",
+      "https://*/*"
+    ]
+  }
+  
