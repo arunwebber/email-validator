@@ -203,7 +203,17 @@ function copyToClipboard(text) {
     tempTextArea.select();
     document.execCommand('copy');
     document.body.removeChild(tempTextArea);
-    alert('Valid emails copied to clipboard!');
+
+    // Display a message on the body
+    const messageDiv = document.createElement('div');
+    messageDiv.textContent = 'Valid emails copied to clipboard!';
+    messageDiv.className = 'copy-success';
+    document.body.appendChild(messageDiv);
+
+    // Remove the message after 3 seconds
+    setTimeout(() => {
+        document.body.removeChild(messageDiv);
+    }, 3000);
 }
 
 
@@ -214,18 +224,66 @@ function addToInvalidEmailList(email) {
         localStorage.setItem('invalidEmails', JSON.stringify(invalidEmailList));
     }
 
-    const listItem = document.createElement('li');
-    listItem.textContent = email;
+    const listItem = createInvalidEmailListItem(email);
     document.getElementById('invalidEmailsList').appendChild(listItem);
 }
 
 function loadInvalidEmails() {
     const invalidEmailList = JSON.parse(localStorage.getItem('invalidEmails')) || [];
     const invalidEmailListElement = document.getElementById('invalidEmailsList');
+    invalidEmailListElement.innerHTML = ''; // Clear existing list
+
     invalidEmailList.forEach(email => {
-        const listItem = document.createElement('li');
-        listItem.textContent = email;
+        const listItem = createInvalidEmailListItem(email);
         invalidEmailListElement.appendChild(listItem);
+    });
+
+    attachSearchListener(); // Attach the search functionality
+}
+
+function createInvalidEmailListItem(email) {
+    const listItem = document.createElement('li');
+    listItem.textContent = email;
+
+    const removeButton = document.createElement('button');
+    removeButton.textContent = '×'; // Close symbol
+    removeButton.style.marginLeft = '10px';
+    removeButton.style.color = 'red';
+    removeButton.style.cursor = 'pointer';
+
+    // Attach click event to remove the email
+    removeButton.addEventListener('click', function () {
+        removeInvalidEmail(email, listItem);
+    });
+
+    listItem.appendChild(removeButton);
+    return listItem;
+}
+
+function removeInvalidEmail(email, listItem) {
+    const invalidEmailList = JSON.parse(localStorage.getItem('invalidEmails')) || [];
+    const updatedList = invalidEmailList.filter(invalidEmail => invalidEmail !== email);
+    localStorage.setItem('invalidEmails', JSON.stringify(updatedList));
+
+    // Remove the list item from the DOM
+    listItem.remove();
+}
+
+function attachSearchListener() {
+    const searchInput = document.getElementById('searchInvalidEmails');
+    searchInput.addEventListener('input', function () {
+        const searchTerm = searchInput.value.toLowerCase();
+        const invalidEmailListElement = document.getElementById('invalidEmailsList');
+        const listItems = Array.from(invalidEmailListElement.children);
+
+        listItems.forEach(item => {
+            const email = item.textContent.toLowerCase().replace('×', '').trim();
+            if (email.includes(searchTerm)) {
+                item.style.display = ''; // Show item
+            } else {
+                item.style.display = 'none'; // Hide item
+            }
+        });
     });
 }
 
