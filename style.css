@@ -167,7 +167,7 @@ button#addInvalid:hover {
 /* Footer credentials */
 #credentials {
     font-family: Arial, sans-serif;
-    font-size: 8px;
+    font-size: 14px;
     color: #030303;
     text-align: center;
     background-color: hsl(0, 27%, 96%);
