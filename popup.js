@@ -47,16 +47,14 @@ function addToInvalidEmailList(email) {
     invalidEmailList.push(email);
     localStorage.setItem('invalidEmails', JSON.stringify(invalidEmailList));
 
-    const listItem = document.createElement('li');
-    listItem.textContent = email;
+    const listItem = createInvalidEmailListItem(email);
     document.getElementById('invalidEmailsList').appendChild(listItem);
+    updateInvalidEmailCount(); // Update count after adding an email
 }
-
 
 async function validateEmail(email) {
     const invalidEmailList = JSON.parse(localStorage.getItem('invalidEmails')) || [];
     
-    // First check if the email is already in the invalid list
     if (invalidEmailList.includes(email)) {
         return { isValid: false, message: "Email is in the invalid registry." };
     }
@@ -66,7 +64,6 @@ async function validateEmail(email) {
         return { isValid: false, message: "Invalid email syntax." };
     }
 
-    // Check if email has invalid characters or extra text after domain
     if (email.includes("website") || email.includes("if")) {
         return { isValid: false, message: "Email contains invalid characters or extra text." };
     }
@@ -87,7 +84,6 @@ async function validateEmail(email) {
     return { isValid: true, message: "Valid email address!" };
 }
 
-// DNS lookup via Google's DNS-over-HTTPS API
 async function checkMXRecords(domain) {
     const url = `https://dns.google/resolve?name=${domain}&type=MX`;
     try {
@@ -189,9 +185,12 @@ function addCopyButton(validEmails, resultDiv) {
     if (validEmails.length > 0) {
         const copyButton = document.createElement('button');
         copyButton.textContent = 'Copy Valid Emails';
+        copyButton.classList.add('copy-valid-emails'); 
+
         copyButton.addEventListener('click', () => {
-            copyToClipboard(validEmails.join(', ')); // Join emails with a comma and a space
+            copyToClipboard(validEmails.join(', '));
         });
+        
         resultDiv.appendChild(copyButton);
     }
 }
@@ -204,87 +203,76 @@ function copyToClipboard(text) {
     document.execCommand('copy');
     document.body.removeChild(tempTextArea);
 
-    // Display a message on the body
     const messageDiv = document.createElement('div');
     messageDiv.textContent = 'Valid emails copied to clipboard!';
     messageDiv.className = 'copy-success';
     document.body.appendChild(messageDiv);
 
-    // Remove the message after 3 seconds
     setTimeout(() => {
         document.body.removeChild(messageDiv);
     }, 3000);
 }
 
-
-function addToInvalidEmailList(email) {
-    const invalidEmailList = JSON.parse(localStorage.getItem('invalidEmails')) || [];
-    if (!invalidEmailList.includes(email)) {
-        invalidEmailList.push(email);
-        localStorage.setItem('invalidEmails', JSON.stringify(invalidEmailList));
-    }
-
-    const listItem = createInvalidEmailListItem(email);
-    document.getElementById('invalidEmailsList').appendChild(listItem);
-}
-
 function loadInvalidEmails() {
     const invalidEmailList = JSON.parse(localStorage.getItem('invalidEmails')) || [];
     const invalidEmailListElement = document.getElementById('invalidEmailsList');
-    invalidEmailListElement.innerHTML = ''; // Clear existing list
+    invalidEmailListElement.innerHTML = ''; // Clear the list
 
     invalidEmailList.forEach(email => {
         const listItem = createInvalidEmailListItem(email);
         invalidEmailListElement.appendChild(listItem);
     });
 
-    attachSearchListener(); // Attach the search functionality
+    updateInvalidEmailCount(); // Update the invalid email count when loading
+}
+
+function updateInvalidEmailCount() {
+    const invalidEmailList = JSON.parse(localStorage.getItem('invalidEmails')) || [];
+    const countElement = document.getElementById('invalidCount');
+    countElement.textContent = invalidEmailList.length; // Update the count
 }
 
 function createInvalidEmailListItem(email) {
     const listItem = document.createElement('li');
     listItem.textContent = email;
+    listItem.classList.add('invalid-email-item');
 
-    const removeButton = document.createElement('button');
-    removeButton.textContent = '×'; // Close symbol
-    removeButton.style.marginLeft = '10px';
-    removeButton.style.color = 'red';
-    removeButton.style.cursor = 'pointer';
+    const closeButton = document.createElement('button');
+    closeButton.textContent = '×'; // Use the × symbol for the close button
+    closeButton.classList.add('close-invalid-email');
+    closeButton.addEventListener('click', () => removeInvalidEmail(email, listItem));
 
-    // Attach click event to remove the email
-    removeButton.addEventListener('click', function () {
-        removeInvalidEmail(email, listItem);
-    });
+    listItem.appendChild(closeButton);
 
-    listItem.appendChild(removeButton);
     return listItem;
 }
+
 
 function removeInvalidEmail(email, listItem) {
     const invalidEmailList = JSON.parse(localStorage.getItem('invalidEmails')) || [];
     const updatedList = invalidEmailList.filter(invalidEmail => invalidEmail !== email);
     localStorage.setItem('invalidEmails', JSON.stringify(updatedList));
 
-    // Remove the list item from the DOM
-    listItem.remove();
+    listItem.remove(); // Remove the item from the list in UI
+    updateInvalidEmailCount(); // Update the count after removal
 }
 
 function attachSearchListener() {
     const searchInput = document.getElementById('searchInvalidEmails');
     searchInput.addEventListener('input', function () {
-        const searchTerm = searchInput.value.toLowerCase();
-        const invalidEmailListElement = document.getElementById('invalidEmailsList');
-        const listItems = Array.from(invalidEmailListElement.children);
+        const query = searchInput.value.toLowerCase();
+        const invalidEmailList = JSON.parse(localStorage.getItem('invalidEmails')) || [];
+        const filteredEmails = invalidEmailList.filter(email => email.toLowerCase().includes(query));
 
-        listItems.forEach(item => {
-            const email = item.textContent.toLowerCase().replace('×', '').trim();
-            if (email.includes(searchTerm)) {
-                item.style.display = ''; // Show item
-            } else {
-                item.style.display = 'none'; // Hide item
-            }
+        const invalidEmailListElement = document.getElementById('invalidEmailsList');
+        invalidEmailListElement.innerHTML = ''; // Clear the list
+
+        filteredEmails.forEach(email => {
+            const listItem = createInvalidEmailListItem(email);
+            invalidEmailListElement.appendChild(listItem);
         });
     });
 }
 
-window.onload = loadInvalidEmails;
+loadInvalidEmails(); // Load invalid emails on page load
+attachSearchListener(); // Attach search listener on page load

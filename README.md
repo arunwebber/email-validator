@@ -7,7 +7,7 @@ This Chrome extension allows you to validate email addresses directly in your br
 - **Bulk Email Validation**: Validate multiple emails at once from a single text input.
 - **Manually Add Invalid Emails**: Add invalid emails to a persistent invalid email registry stored in `localStorage`.
 - **Copy Valid Emails**: Copy the valid emails as a comma-separated list to your clipboard for easy pasting.
-- **Invalid Emails Registry**: View and manage a list of manually added invalid emails.
+- **Invalid Emails Registry**: View and manage a list of manually added invalid emails, with the ability to remove them using a close button.
 
 ## Technologies Used
 
@@ -33,12 +33,15 @@ This Chrome extension allows you to validate email addresses directly in your br
    - Invalid emails will appear in red text.
 4. **Add Invalid Emails**: 
    - You can manually add invalid emails using the **Manually Add Invalid Emails** section. 
-   - Click **Add Invalid Email** to save them.
-5. **Copy Valid Emails**: 
+   - Click **Add Invalid Emails** to save them.
+5. **Remove Invalid Emails**:
+   - Manually added invalid emails will have a **close button** (red "×") next to them, which you can click to remove them from the registry.
+6. **Copy Valid Emails**: 
    - Once the emails are validated, click the **Copy Valid Emails** button to copy the valid emails as a comma-separated list to your clipboard.
 
 ### Step 3: View Invalid Email Registry
 - The **Invalid Emails Registry** section will show all manually added invalid emails, which will be saved in your browser's local storage and persist across sessions.
+- Invalid emails can be removed from the registry using the close button next to each email.
 
 ## Features Breakdown
 
@@ -49,6 +52,7 @@ This Chrome extension allows you to validate email addresses directly in your br
 ### 2. Invalid Email Registry:
 - Manually added invalid emails are stored in `localStorage` and displayed in the **Invalid Emails Registry** section.
 - Avoids duplicates by checking before adding invalid emails.
+- Each invalid email entry includes a **close button** for easy removal.
 
 ### 3. Copy Valid Emails:
 - After validation, the **Copy Valid Emails** button allows you to copy the valid emails as a comma-separated list to your clipboard.
