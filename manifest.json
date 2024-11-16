@@ -3,9 +3,7 @@
   "name": "Email Validator",
   "version": "1.0",
   "description": "A simple email validator that checks email format and domain existence (IDN support)",
-  "permissions": [
-    "activeTab"
-  ],
+  "permissions": [],
   "background": {
     "service_worker": "background.js"
   },
@@ -17,12 +15,6 @@
       "128": "images/icon_128.png"
     }
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
-    }
-  ],
   "host_permissions": [
     "https://dns.google/*"
   ],
