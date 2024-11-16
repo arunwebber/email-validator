@@ -63,9 +63,6 @@ This Chrome extension allows you to validate email addresses directly in your br
 ## Installation
 
 1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-username/email-validator-chrome-extension.git
-   ```
 
 2. **Load the extension**:
    - Open **Google Chrome** and navigate to **chrome://extensions**.
