@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/arunwebber/email-validator/blob/main/images/icon_128.png" alt="Email Validator Icon" width="128" height="128">
+</p>
+
 # Email Validator Chrome Extension
 
 This Chrome extension allows you to validate email addresses directly in your browser. It provides functionalities like bulk email validation, adding invalid emails to a registry, and copying valid emails in a comma-separated format.
